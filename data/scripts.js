@@ -1,18 +1,19 @@
-function time_readable(dow, hours, minutes) {
+function time_readable(dow, hours, minutes,triegohor,triegomin) {
 	var dow_readable = {
-		1 : "Monday",
-		2 : "Tuesday",
-		3 : "Wednesday",
-		4 : "Thursday",
-		5 : "Friday",
-		6 : "Saturday",
-		7 : "Sunday"
+		1 : "Lunes",
+		2 : "Martes",
+		3 : "Miercoles",
+		4 : "Jueves",
+		5 : "Viernes",
+		6 : "Sabado",
+		7 : "Domingo"
 	}[dow];
 
 	hours = ("0" + hours).slice(-2);
 	minutes = ("0" + minutes).slice(-2);
+	triegomin = ("0" + triegomin).slice(-2);
 
-	return dow_readable + ", " + hours + ":" + minutes;
+	return dow_readable + ", " + hours + ":" + minutes + ", " + triegomin;
 }
 
 function alarmlist_update() {
@@ -21,7 +22,7 @@ function alarmlist_update() {
 		JSON.parse(res).forEach(function (alarm) {
 			$("#alarmlist").append($("<tr>")
 				.append($("<td>").addClass("alarm_id").text(alarm.id))
-				.append($("<td>").addClass("alarm_time").text(time_readable(alarm.dow, alarm.hrs, alarm.min)))
+				.append($("<td>").addClass("alarm_time").text(time_readable(alarm.dow, alarm.hrs, alarm.min, alarm.trm)))
 				.append($("<td>").append($("<a>").addClass("alarm_delete").data("alarmid", alarm.id).html("&#215;")))
 			);
 		});
@@ -56,11 +57,13 @@ $(function () {
 		var dow = $("#dow").val();
 		var hours = parseInt($("#hours").val());
 		var minutes = parseInt($("#minutes").val());
+		var triegomin = parseInt($("#triegomin").val());
 
 		if (isNaN(hours) || hours >= 24 || isNaN(minutes) || minutes >= 60) {
 			alert("Invalid time!");
 		} else {
-			$.get("waketime_add", {	dow: dow, hrs : hours, min : minutes }, function (res) {
+			$.get("waketime_add", {	dow: dow, hrs : hours, min : minutes,
+			 												trm: triegomin}, function (res) {
 				if (res !== "ok") {
 					alert("Error: " + res);
 				} else {
